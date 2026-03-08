@@ -73,3 +73,29 @@ class MarketData:
     sma_200: float | None = None
     rsi_14: float | None = None
     summary: str = ""
+
+    # --- Rich chart data (populated by Alpha Vantage) ---
+    # OHLCV daily data: [{date, open, high, low, close, volume}, ...]
+    ohlcv_90d: list[dict] = field(default_factory=list)
+    volume_history_90d: list[float] = field(default_factory=list)
+    date_labels_90d: list[str] = field(default_factory=list)
+    # MACD: {macd: [], signal: [], histogram: [], dates: []}
+    macd_data: dict | None = None
+    # Bollinger: {upper: [], middle: [], lower: [], dates: []}
+    bollinger_bands: dict | None = None
+    ema_20: float | None = None
+    ema_50: float | None = None
+    adx: float | None = None
+    atr: float | None = None
+    rsi_history: list = field(default_factory=list)
+    # Extra fundamentals from Alpha Vantage OVERVIEW
+    eps: float | None = None
+    forward_pe: float | None = None
+    peg_ratio: float | None = None
+    book_value: float | None = None
+    ev_to_ebitda: float | None = None
+    return_on_equity: float | None = None
+    return_on_assets: float | None = None
+    quarterly_revenue_growth_yoy: float | None = None
+    quarterly_earnings_growth_yoy: float | None = None
+    provider: str = "yfinance"

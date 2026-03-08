@@ -668,6 +668,107 @@ footer {
     opacity: 0.6;
 }
 
+/* === Provider Toggle === */
+.provider-toggle {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.toggle-text {
+    font-size: 12px;
+    color: var(--accent2);
+    font-weight: 600;
+    min-width: 105px;
+    text-align: right;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: var(--accent);
+    border-radius: 24px;
+    transition: background 0.3s;
+}
+
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--green);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
+
+/* === Chart card wide === */
+.chart-card-wide {
+    grid-column: 1 / -1;
+}
+
+.chart-card-wide canvas {
+    max-height: 350px;
+}
+
+/* === Technical Summary Grid === */
+.tech-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+}
+
+.tech-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--card);
+    font-size: 13px;
+}
+
+.tech-bullish { color: var(--green); font-weight: 600; }
+.tech-bearish { color: var(--red); font-weight: 600; }
+.tech-neutral { color: var(--yellow); font-weight: 600; }
+
+/* === Provider badge === */
+.provider-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--accent2);
+    margin-left: auto;
+}
+
 /* === Responsive === */
 @media (max-width: 1100px) {
     .top-row {
@@ -675,6 +776,12 @@ footer {
     }
     .top-row .decision-card {
         grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 1100px) {
+    .tech-summary-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -697,5 +804,13 @@ footer {
     }
     .breakdown-grid {
         grid-template-columns: 1fr;
+    }
+    .tech-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .provider-toggle {
+        order: -1;
+        width: 100%;
+        justify-content: center;
     }
 }

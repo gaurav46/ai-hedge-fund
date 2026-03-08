@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Hedge Fund Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -15,6 +17,15 @@
                 <span class="logo-icon">&#9670;</span>
                 <h1>AI Hedge Fund</h1>
                 <span class="badge">18 Agents</span>
+            </div>
+            <div class="provider-toggle">
+                <label class="toggle-label">
+                    <span class="toggle-text" id="providerLabel">Alpha Vantage</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="providerToggle" onchange="onProviderToggle()">
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
             </div>
             <div class="search-bar">
                 <input type="text" id="tickerInput" value="AAPL, GOOG, GOOGL, MSFT, AMZN, NVDA, TSLA, META" placeholder="AAPL, GOOG, GOOGL, MSFT" autocomplete="off">
@@ -173,6 +184,64 @@
             <div class="card chart-card">
                 <div class="card-header">Signal Distribution</div>
                 <canvas id="signalChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Rich Charts Section (visible when Alpha Vantage data available) -->
+        <div id="richChartsSection" class="hidden">
+            <!-- Candlestick + Volume -->
+            <div class="charts-row">
+                <div class="card chart-card chart-card-wide">
+                    <div class="card-header">90-Day Price &amp; Volume</div>
+                    <canvas id="candlestickChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Bollinger Bands + RSI -->
+            <div class="charts-row">
+                <div class="card chart-card">
+                    <div class="card-header">Bollinger Bands (20-day)</div>
+                    <canvas id="bollingerChart"></canvas>
+                </div>
+                <div class="card chart-card">
+                    <div class="card-header">RSI (14-day)</div>
+                    <canvas id="rsiChart"></canvas>
+                </div>
+            </div>
+
+            <!-- MACD + Volume -->
+            <div class="charts-row">
+                <div class="card chart-card">
+                    <div class="card-header">MACD</div>
+                    <canvas id="macdChart"></canvas>
+                </div>
+                <div class="card chart-card">
+                    <div class="card-header">Volume</div>
+                    <canvas id="volumeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Technical Summary Panel -->
+            <div class="card">
+                <div class="card-header">Technical Analysis Summary</div>
+                <div class="tech-summary-grid" id="techSummaryGrid">
+                    <div class="tech-item"><span class="label">EMA 20</span><span id="techEMA20">--</span></div>
+                    <div class="tech-item"><span class="label">EMA 50</span><span id="techEMA50">--</span></div>
+                    <div class="tech-item"><span class="label">SMA 20</span><span id="techSMA20">--</span></div>
+                    <div class="tech-item"><span class="label">SMA 50</span><span id="techSMA50">--</span></div>
+                    <div class="tech-item"><span class="label">SMA 200</span><span id="techSMA200">--</span></div>
+                    <div class="tech-item"><span class="label">RSI (14)</span><span id="techRSI">--</span></div>
+                    <div class="tech-item"><span class="label">ADX</span><span id="techADX">--</span></div>
+                    <div class="tech-item"><span class="label">MACD</span><span id="techMACD">--</span></div>
+                    <div class="tech-item"><span class="label">Signal</span><span id="techMACDSignal">--</span></div>
+                    <div class="tech-item"><span class="label">BB Position</span><span id="techBBPos">--</span></div>
+                    <div class="tech-item"><span class="label">Trend</span><span id="techTrend">--</span></div>
+                    <div class="tech-item"><span class="label">EPS</span><span id="techEPS">--</span></div>
+                    <div class="tech-item"><span class="label">Forward P/E</span><span id="techFwdPE">--</span></div>
+                    <div class="tech-item"><span class="label">PEG Ratio</span><span id="techPEG">--</span></div>
+                    <div class="tech-item"><span class="label">EV/EBITDA</span><span id="techEVEBITDA">--</span></div>
+                    <div class="tech-item"><span class="label">ROE</span><span id="techROE">--</span></div>
+                </div>
             </div>
         </div>
 

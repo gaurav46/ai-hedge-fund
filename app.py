@@ -28,20 +28,21 @@ def analyze():
     data = request.get_json()
     ticker = data.get("ticker", "").upper().strip()
     portfolio_value = float(data.get("portfolio_value", 5_000))
+    provider = data.get("provider")
 
     if not ticker:
         return jsonify({"error": "Ticker is required"}), 400
 
     try:
-        result = _analyze_single(ticker, portfolio_value)
+        result = _analyze_single(ticker, portfolio_value, provider)
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": f"Failed to fetch data for {ticker}: {e}"}), 400
 
 
-def _analyze_single(ticker, portfolio_value):
+def _analyze_single(ticker, portfolio_value, provider=None):
     """Analyze a single ticker. Returns a dict or raises."""
-    market_data = fetch_market_data(ticker)
+    market_data = fetch_market_data(ticker, provider=provider)
     investor_signals = [agent.analyze(market_data) for agent in INVESTOR_AGENTS]
     analyst_signals = [agent.analyze(market_data) for agent in ANALYST_AGENTS]
     all_signals = investor_signals + analyst_signals
@@ -91,6 +92,22 @@ def _analyze_single(ticker, portfolio_value):
             "rsi_14": market_data.rsi_14,
             "price_history_30d": market_data.price_history_30d,
             "summary": market_data.summary[:300] if market_data.summary else "",
+            "ohlcv_90d": market_data.ohlcv_90d,
+            "volume_history_90d": market_data.volume_history_90d,
+            "date_labels_90d": market_data.date_labels_90d,
+            "macd_data": market_data.macd_data,
+            "bollinger_bands": market_data.bollinger_bands,
+            "ema_20": market_data.ema_20,
+            "ema_50": market_data.ema_50,
+            "adx": market_data.adx,
+            "rsi_history": market_data.rsi_history,
+            "eps": market_data.eps,
+            "forward_pe": market_data.forward_pe,
+            "peg_ratio": market_data.peg_ratio,
+            "ev_to_ebitda": market_data.ev_to_ebitda,
+            "return_on_equity": market_data.return_on_equity,
+            "return_on_assets": market_data.return_on_assets,
+            "provider": market_data.provider,
         },
         "investor_signals": [signal_to_dict(s) for s in investor_signals],
         "analyst_signals": [signal_to_dict(s) for s in analyst_signals],
@@ -121,6 +138,7 @@ def analyze_batch():
     data = request.get_json()
     tickers_raw = data.get("tickers", [])
     portfolio_value = float(data.get("portfolio_value", 5_000))
+    provider = data.get("provider")
 
     # Deduplicate and clean
     tickers = list(dict.fromkeys(t.strip().upper() for t in tickers_raw if t.strip()))
@@ -134,7 +152,7 @@ def analyze_batch():
     errors = []
     for ticker in tickers:
         try:
-            result = _analyze_single(ticker, portfolio_value)
+            result = _analyze_single(ticker, portfolio_value, provider)
             results.append(result)
         except Exception as e:
             errors.append({"ticker": ticker, "error": str(e)})

@@ -1,10 +1,11 @@
-"""Market data provider using yfinance."""
+"""Market data provider — routes to yfinance or Alpha Vantage."""
 
 from __future__ import annotations
 import yfinance as yf
 import pandas as pd
 
 from models import MarketData
+from config import DEFAULT_PROVIDER
 
 
 def _safe_get(info: dict, key: str, default=None):
@@ -33,8 +34,18 @@ def compute_sma(prices: pd.Series, period: int) -> float | None:
     return round(prices.rolling(window=period).mean().iloc[-1], 2)
 
 
-def fetch_market_data(ticker: str) -> MarketData:
-    """Fetch comprehensive market data for a ticker."""
+def fetch_market_data(ticker: str, provider: str | None = None) -> MarketData:
+    """Route to the appropriate data provider."""
+    if provider is None:
+        provider = DEFAULT_PROVIDER
+    if provider == "alphavantage":
+        from data.alpha_vantage import fetch_market_data_av
+        return fetch_market_data_av(ticker)
+    return fetch_market_data_yf(ticker)
+
+
+def fetch_market_data_yf(ticker: str) -> MarketData:
+    """Fetch comprehensive market data for a ticker using yfinance."""
     stock = yf.Ticker(ticker)
     info = stock.info
 
@@ -78,6 +89,7 @@ def fetch_market_data(ticker: str) -> MarketData:
         sma_200=compute_sma(close_200, 200),
         rsi_14=compute_rsi(close_prices),
         summary=" ".join(summary_parts),
+        provider="yfinance",
     )
 
 
