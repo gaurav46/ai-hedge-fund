@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hedge Fund Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-inner">
+            <div class="logo">
+                <span class="logo-icon">&#9670;</span>
+                <h1>AI Hedge Fund</h1>
+                <span class="badge">18 Agents</span>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="tickerInput" placeholder="AAPL, GOOGL, MSFT" autocomplete="off">
+                <input type="number" id="portfolioInput" value="1000000" min="1000" step="10000">
+                <button id="analyzeBtn" onclick="runAnalysis()">Analyze</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading overlay -->
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p id="loadingText">18 agents analyzing<span class="dots">...</span></p>
+        <div class="loading-progress" id="loadingProgress"></div>
+    </div>
+
+    <!-- Error -->
+    <div id="errorMsg" class="error-msg hidden"></div>
+
+    <!-- Landing -->
+    <div id="landing" class="landing">
+        <div class="landing-content">
+            <div class="landing-icon">&#9670;</div>
+            <h2>Multi-Agent Trading Intelligence</h2>
+            <p>12 Investor Styles &middot; 4 Analysts &middot; Risk Manager &middot; Portfolio Manager</p>
+            <div class="agent-grid-preview">
+                <span>Buffett</span><span>Munger</span><span>Graham</span><span>Damodaran</span>
+                <span>Burry</span><span>Ackman</span><span>Wood</span><span>Lynch</span>
+                <span>Fisher</span><span>Pabrai</span><span>Druckenmiller</span><span>Jhunjhunwala</span>
+            </div>
+            <p class="landing-hint">Enter one or more tickers separated by commas (e.g. AAPL, GOOGL, MSFT)</p>
+        </div>
+    </div>
+
+    <!-- Portfolio Summary (shown for multi-ticker) -->
+    <section id="portfolioSummary" class="hidden">
+        <div class="summary-wrap">
+            <div class="card">
+                <div class="card-header">Portfolio Summary</div>
+                <div class="summary-table-wrap">
+                    <table class="summary-table" id="summaryTable">
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Price</th>
+                                <th>Action</th>
+                                <th>Shares</th>
+                                <th>Conviction</th>
+                                <th>Risk</th>
+                                <th>Bullish</th>
+                                <th>Bearish</th>
+                                <th>Sector</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="charts-row">
+                <div class="card chart-card">
+                    <div class="card-header">Action Comparison</div>
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+                <div class="card chart-card">
+                    <div class="card-header">Risk Comparison</div>
+                    <canvas id="riskCompChart"></canvas>
+                </div>
+            </div>
+            <div id="summaryErrors"></div>
+        </div>
+    </section>
+
+    <!-- Ticker tabs (shown for multi-ticker) -->
+    <div id="tickerTabs" class="ticker-tabs hidden"></div>
+
+    <!-- Dashboard (hidden until analysis runs) -->
+    <main id="dashboard" class="hidden">
+        <!-- Top row: Decision + Market Data + Risk -->
+        <div class="top-row">
+            <!-- Decision Card -->
+            <div class="card decision-card" id="decisionCard">
+                <div class="card-header">Final Decision</div>
+                <div class="decision-body">
+                    <div class="decision-action" id="decisionAction">--</div>
+                    <div class="decision-ticker" id="decisionTicker">--</div>
+                    <div class="decision-meta">
+                        <div><span class="label">Shares</span><span id="decisionShares">--</span></div>
+                        <div><span class="label">Conviction</span><span id="decisionConviction">--</span></div>
+                        <div><span class="label">Risk</span><span id="decisionRisk">--</span></div>
+                    </div>
+                    <div class="decision-reasoning" id="decisionReasoning"></div>
+                </div>
+            </div>
+
+            <!-- Market Data Card -->
+            <div class="card market-card">
+                <div class="card-header">Market Data <span class="ticker-label" id="mktTicker"></span></div>
+                <div class="market-grid">
+                    <div class="mkt-item"><span class="label">Price</span><span id="mktPrice">--</span></div>
+                    <div class="mkt-item"><span class="label">Mkt Cap</span><span id="mktCap">--</span></div>
+                    <div class="mkt-item"><span class="label">P/E</span><span id="mktPE">--</span></div>
+                    <div class="mkt-item"><span class="label">P/B</span><span id="mktPB">--</span></div>
+                    <div class="mkt-item"><span class="label">Rev Growth</span><span id="mktGrowth">--</span></div>
+                    <div class="mkt-item"><span class="label">Margin</span><span id="mktMargin">--</span></div>
+                    <div class="mkt-item"><span class="label">D/E</span><span id="mktDE">--</span></div>
+                    <div class="mkt-item"><span class="label">FCF</span><span id="mktFCF">--</span></div>
+                    <div class="mkt-item"><span class="label">Div Yield</span><span id="mktDiv">--</span></div>
+                    <div class="mkt-item"><span class="label">Beta</span><span id="mktBeta">--</span></div>
+                    <div class="mkt-item"><span class="label">52W High</span><span id="mkt52H">--</span></div>
+                    <div class="mkt-item"><span class="label">52W Low</span><span id="mkt52L">--</span></div>
+                    <div class="mkt-item"><span class="label">RSI (14)</span><span id="mktRSI">--</span></div>
+                    <div class="mkt-item"><span class="label">Sector</span><span id="mktSector">--</span></div>
+                </div>
+            </div>
+
+            <!-- Risk + Consensus -->
+            <div class="card risk-card">
+                <div class="card-header">Risk &amp; Consensus</div>
+                <div class="risk-body">
+                    <div class="risk-gauge">
+                        <canvas id="riskGauge" width="180" height="110"></canvas>
+                        <div class="risk-score-label" id="riskScoreLabel">--</div>
+                    </div>
+                    <div class="risk-details">
+                        <div><span class="label">Max Position</span><span id="riskPos">--</span></div>
+                        <div><span class="label">VaR (95%)</span><span id="riskVar">--</span></div>
+                    </div>
+                    <div class="risk-warnings" id="riskWarnings"></div>
+                    <div class="consensus-bar-wrap">
+                        <div class="consensus-labels">
+                            <span class="bull-label" id="conBull">0</span>
+                            <span class="neut-label" id="conNeut">0</span>
+                            <span class="bear-label" id="conBear">0</span>
+                        </div>
+                        <div class="consensus-bar">
+                            <div class="bar-bull" id="barBull"></div>
+                            <div class="bar-neut" id="barNeut"></div>
+                            <div class="bar-bear" id="barBear"></div>
+                        </div>
+                        <div class="consensus-legend">
+                            <span><i class="dot dot-bull"></i>Bullish</span>
+                            <span><i class="dot dot-neut"></i>Neutral</span>
+                            <span><i class="dot dot-bear"></i>Bearish</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+            <div class="card chart-card">
+                <div class="card-header">30-Day Price History</div>
+                <canvas id="priceChart"></canvas>
+            </div>
+            <div class="card chart-card">
+                <div class="card-header">Signal Distribution</div>
+                <canvas id="signalChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Investor Signals -->
+        <div class="card signals-card">
+            <div class="card-header">Investor Agents (12)</div>
+            <div class="signals-grid" id="investorGrid"></div>
+        </div>
+
+        <!-- Analyst Signals -->
+        <div class="card signals-card">
+            <div class="card-header">Analysis Agents (4)</div>
+            <div class="signals-grid" id="analystGrid"></div>
+        </div>
+
+        <!-- Signal Breakdown -->
+        <div class="card">
+            <div class="card-header">Signal Breakdown</div>
+            <div class="breakdown-grid" id="breakdownGrid">
+                <div class="breakdown-group">
+                    <h4 class="bull-text">Bullish</h4>
+                    <p id="breakBulls">--</p>
+                </div>
+                <div class="breakdown-group">
+                    <h4 class="neut-text">Neutral</h4>
+                    <p id="breakNeutral">--</p>
+                </div>
+                <div class="breakdown-group">
+                    <h4 class="bear-text">Bearish</h4>
+                    <p id="breakBears">--</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Disclaimer: This is a simulation for educational purposes only. Not financial advice.</p>
+        </footer>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
