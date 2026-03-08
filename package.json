@@ -1,0 +1,13 @@
+{
+  "name": "ai-hedge-fund",
+  "version": "1.0.0",
+  "description": "AI Hedge Fund + Quant Lab on Cloudflare Pages",
+  "scripts": {
+    "dev": "wrangler pages dev static --port 8788",
+    "deploy": "wrangler pages deploy static --project-name ai-hedge-fund",
+    "preview": "wrangler pages dev static"
+  },
+  "devDependencies": {
+    "wrangler": "^3.78.0"
+  }
+}

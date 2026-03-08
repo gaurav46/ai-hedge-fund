@@ -894,3 +894,674 @@ footer {
         justify-content: center;
     }
 }
+
+/* ============================================================
+   === Quant Lab ===
+   ============================================================ */
+
+/* "New" badge variant */
+.badge-new {
+    background: rgba(34,197,94,0.2);
+    color: var(--green);
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 20px;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+/* Analysis controls bar (hidden when on Quant Lab tab) */
+.analysis-controls {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+}
+
+.analysis-controls .search-bar {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Main tab navigation (Analysis / Quant Lab) */
+.main-tabs {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.tab-btn {
+    padding: 6px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    color: var(--text);
+    border-color: var(--accent);
+}
+
+.tab-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Quant Lab page layout */
+#tabQuantLab {
+    height: calc(100vh - 112px);  /* subtract header + analysis-controls */
+    overflow: hidden;
+}
+
+.ql-layout {
+    display: grid;
+    grid-template-columns: 220px 320px 1fr;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Sidebar — the outer aside is ql-sidebar-wrap, the scrollable inner is ql-sidebar */
+.ql-sidebar-wrap {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.ql-sidebar {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ql-sidebar-header {
+    padding: 8px 16px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text2);
+}
+
+.ql-search-wrap,
+.ql-sidebar-search {
+    padding: 6px 10px 8px;
+}
+
+.ql-search-wrap input,
+.ql-sidebar-search input {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+}
+
+.ql-search-wrap input:focus,
+.ql-sidebar-search input:focus {
+    border-color: var(--accent);
+}
+
+.ql-cat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text2);
+    border-radius: 0;
+    transition: all 0.15s;
+    gap: 6px;
+}
+
+.ql-cat-item:hover {
+    background: var(--card);
+    color: var(--text);
+}
+
+.ql-cat-item.active {
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--accent2);
+    font-weight: 600;
+    border-left: 3px solid var(--accent);
+}
+
+.ql-cat-count {
+    font-size: 11px;
+    background: var(--bg);
+    color: var(--text2);
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Model list panel */
+.ql-model-list-wrap {
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+}
+
+.ql-filters {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--bg2);
+    flex-shrink: 0;
+}
+
+.ql-filters select {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+}
+
+.ql-model-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ql-model-card {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--card);
+}
+
+.ql-model-card:hover {
+    border-color: var(--border);
+    background: var(--bg2);
+}
+
+.ql-model-card.active {
+    border-color: var(--accent);
+    background: rgba(99, 102, 241, 0.08);
+}
+
+.ql-card-name,
+.ql-model-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.ql-card-meta,
+.ql-model-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
+.ql-model-asset {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 3px;
+}
+
+.ql-compute-icon { font-size: 13px; }
+
+.badge-tier {
+    background: rgba(99,102,241,0.15);
+    color: var(--accent2);
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.ql-model-list-header {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    flex-shrink: 0;
+}
+
+.ql-model-count {
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Detail panel */
+.ql-detail-wrap {
+    overflow-y: auto;
+    background: var(--bg);
+    padding: 24px;
+}
+
+.ql-detail-panel {
+    max-width: 860px;
+}
+
+.ql-detail-header {
+    margin-bottom: 20px;
+}
+
+.ql-detail-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.ql-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.ql-detail-desc {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.6;
+}
+
+.ql-detail-usecase {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 6px;
+}
+
+.ql-detail-usecase strong {
+    color: var(--text);
+}
+
+/* Equation box */
+.ql-equation-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin: 16px 0;
+    overflow-x: auto;
+}
+
+.ql-equation-box .katex {
+    font-size: 1.3em;
+}
+
+/* Calculator card */
+.ql-calc-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    margin: 16px 0;
+}
+
+.ql-calc-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ql-params-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.ql-param label {
+    display: block;
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.ql-param input[type="number"],
+.ql-param select {
+    width: 100%;
+    padding: 7px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.ql-param input[type="number"]:focus,
+.ql-param select:focus {
+    border-color: var(--accent);
+}
+
+.ql-param-slider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ql-param-slider input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent);
+}
+
+.ql-param-slider span {
+    font-size: 12px;
+    color: var(--accent2);
+    font-weight: 600;
+    min-width: 48px;
+    text-align: right;
+}
+
+.ql-compute-btn {
+    padding: 8px 22px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ql-compute-btn:hover {
+    background: var(--accent2);
+    transform: translateY(-1px);
+}
+
+.ql-compute-btn.pyodide-btn {
+    background: #7c3aed;
+}
+
+.ql-compute-btn.pyodide-btn:hover {
+    background: #6d28d9;
+}
+
+/* Results table */
+.ql-result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+.ql-result-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text2);
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ql-result-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+
+.ql-result-table tr:last-child td {
+    border-bottom: none;
+}
+
+.ql-result-val {
+    font-weight: 600;
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* Code card */
+.ql-code-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 16px 0;
+    overflow: hidden;
+}
+
+.ql-code-header {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    background: var(--bg2);
+}
+
+.ql-code-body {
+    padding: 14px 16px;
+    overflow-x: auto;
+}
+
+.ql-code-body pre {
+    margin: 0;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre;
+}
+
+/* Chart container */
+.ql-chart-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px 0;
+    min-height: 300px;
+}
+
+/* Badges */
+.badge-easy   { background: rgba(34,197,94,0.15);  color: var(--green);  }
+.badge-medium { background: rgba(234,179,8,0.15);  color: var(--yellow); }
+.badge-hard   { background: rgba(239,68,68,0.15);  color: var(--red);    }
+
+.badge-tier1 { background: rgba(99,102,241,0.2);  color: var(--accent2); }
+.badge-tier2 { background: rgba(99,102,241,0.12); color: var(--accent2); }
+.badge-tier3 { background: rgba(99,102,241,0.06); color: var(--text2);   }
+
+.badge-js      { background: rgba(234,179,8,0.15);  color: #fbbf24; }
+.badge-pyodide { background: rgba(139,92,246,0.15); color: #a78bfa; }
+
+/* Pyodide loading status */
+.ql-pyodide-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    margin: 12px 0;
+}
+
+.ql-pyodide-status.loading { border-color: var(--yellow); color: var(--yellow); }
+.ql-pyodide-status.ready   { border-color: var(--green);  color: var(--green);  }
+.ql-pyodide-status.error   { border-color: var(--red);    color: var(--red);    }
+
+.ql-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Pyodide badge (rendered by quant-lab.js into sidebar) */
+.pyodide-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    color: var(--text2);
+}
+
+.pyodide-loading { border-color: var(--yellow); color: var(--yellow); }
+.pyodide-ready   { border-color: var(--green);  color: var(--green);  }
+.pyodide-error   { border-color: var(--red);    color: var(--red);    }
+
+/* Detail placeholder (shown before a model is selected) */
+.ql-detail-placeholder {
+    padding: 48px 32px;
+    text-align: center;
+    color: var(--text2);
+}
+
+.ql-placeholder-icon {
+    font-size: 48px;
+    color: var(--accent);
+    margin-bottom: 16px;
+}
+
+.ql-detail-placeholder h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+
+.ql-detail-placeholder p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.ql-detail-placeholder ul {
+    text-align: left;
+    display: inline-block;
+    list-style: disc;
+    padding-left: 20px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text2);
+}
+
+.ql-legend {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12px;
+    align-items: center;
+}
+
+/* Empty / placeholder state */
+.ql-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text2);
+    text-align: center;
+    gap: 12px;
+    padding: 40px;
+}
+
+.ql-empty-icon { font-size: 48px; }
+.ql-empty-title { font-size: 18px; font-weight: 600; color: var(--text); }
+.ql-empty-sub   { font-size: 14px; max-width: 340px; line-height: 1.5; }
+
+/* Responsive Quant Lab */
+@media (max-width: 1100px) {
+    .ql-layout {
+        grid-template-columns: 180px 260px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .ql-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+        height: auto;
+    }
+
+    #tabQuantLab {
+        height: auto;
+        overflow: visible;
+    }
+
+    .ql-sidebar-wrap {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .ql-sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 8px;
+        flex-wrap: nowrap;
+    }
+
+    .ql-cat-item {
+        white-space: nowrap;
+        padding: 6px 12px;
+        border-radius: 20px;
+        flex-shrink: 0;
+    }
+
+    .ql-cat-item.active {
+        border-left: none;
+        border: 1px solid var(--accent);
+    }
+
+    .ql-model-list-wrap {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        max-height: 300px;
+    }
+}
+}
