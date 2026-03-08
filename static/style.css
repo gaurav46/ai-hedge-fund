@@ -18,6 +18,49 @@
     --yellow-bg: rgba(234,179,8,0.12);
     --radius: 12px;
     --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --overlay-bg: rgba(11,14,23,0.85);
+}
+
+/* === Light Theme === */
+html[data-theme="light"] {
+    --bg: #f1f5f9;
+    --bg2: #ffffff;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text2: #64748b;
+    --accent: #6366f1;
+    --accent2: #4f46e5;
+    --green: #16a34a;
+    --green-bg: rgba(22,163,74,0.10);
+    --red: #dc2626;
+    --red-bg: rgba(220,38,38,0.10);
+    --yellow: #ca8a04;
+    --yellow-bg: rgba(202,138,4,0.10);
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --overlay-bg: rgba(241,245,249,0.90);
+}
+
+/* === System Theme (follows OS preference) === */
+@media (prefers-color-scheme: light) {
+    html[data-theme="system"] {
+        --bg: #f1f5f9;
+        --bg2: #ffffff;
+        --card: #ffffff;
+        --border: #e2e8f0;
+        --text: #0f172a;
+        --text2: #64748b;
+        --accent: #6366f1;
+        --accent2: #4f46e5;
+        --green: #16a34a;
+        --green-bg: rgba(22,163,74,0.10);
+        --red: #dc2626;
+        --red-bg: rgba(220,38,38,0.10);
+        --yellow: #ca8a04;
+        --yellow-bg: rgba(202,138,4,0.10);
+        --shadow: 0 4px 24px rgba(0,0,0,0.08);
+        --overlay-bg: rgba(241,245,249,0.90);
+    }
 }
 
 body {
@@ -135,7 +178,7 @@ header {
 .loading {
     position: fixed;
     inset: 0;
-    background: rgba(11,14,23,0.85);
+    background: var(--overlay-bg);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -666,6 +709,43 @@ footer {
     color: var(--text2);
     font-size: 12px;
     opacity: 0.6;
+}
+
+/* === Theme Selector === */
+.theme-selector {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+}
+
+.theme-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 26px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.theme-btn:hover {
+    background: var(--card);
+    color: var(--text);
+}
+
+.theme-btn.active {
+    background: var(--accent);
+    color: #fff;
 }
 
 /* === Provider Toggle === */

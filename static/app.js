@@ -1,5 +1,19 @@
 // === AI Hedge Fund Dashboard — Multi-Ticker + Alpha Vantage ===
 
+// === Theme Management ===
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    document.getElementById('themeBtnSystem').classList.toggle('active', theme === 'system');
+    document.getElementById('themeBtnLight').classList.toggle('active', theme === 'light');
+    document.getElementById('themeBtnDark').classList.toggle('active', theme === 'dark');
+}
+
+(function initTheme() {
+    const saved = localStorage.getItem('theme') || 'system';
+    setTheme(saved);
+})();
+
 let priceChart = null;
 let signalChart = null;
 let comparisonChart = null;
