@@ -16,14 +16,14 @@ let volumeChartObj = null;
 let allResults = [];
 let activeTickerIdx = 0;
 
-// Provider state — default is Alpha Vantage (unchecked = alphavantage, checked = yfinance)
-let currentProvider = 'alphavantage';
+// Provider state — default is Yahoo Finance (unchecked = yfinance, checked = alphavantage)
+let currentProvider = 'yfinance';
 
 function onProviderToggle() {
     const checked = document.getElementById('providerToggle').checked;
-    currentProvider = checked ? 'yfinance' : 'alphavantage';
+    currentProvider = checked ? 'alphavantage' : 'yfinance';
     document.getElementById('providerLabel').textContent =
-        checked ? 'Yahoo Finance' : 'Alpha Vantage';
+        checked ? 'Alpha Vantage' : 'Yahoo Finance';
 }
 
 // Enter key triggers analysis

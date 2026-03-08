@@ -7,4 +7,4 @@ ALPHA_VANTAGE_API_KEY = "RS4FY2HB5XM8FL6B"
 ALPHA_VANTAGE_BASE_URL = "https://www.alphavantage.co/query"
 
 # Data provider: "alphavantage" or "yfinance"
-DEFAULT_PROVIDER = "alphavantage"
+DEFAULT_PROVIDER = "yfinance"
