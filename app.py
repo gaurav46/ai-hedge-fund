@@ -27,7 +27,7 @@ def index():
 def analyze():
     data = request.get_json()
     ticker = data.get("ticker", "").upper().strip()
-    portfolio_value = float(data.get("portfolio_value", 1_000_000))
+    portfolio_value = float(data.get("portfolio_value", 5_000))
 
     if not ticker:
         return jsonify({"error": "Ticker is required"}), 400
@@ -120,7 +120,7 @@ def _analyze_single(ticker, portfolio_value):
 def analyze_batch():
     data = request.get_json()
     tickers_raw = data.get("tickers", [])
-    portfolio_value = float(data.get("portfolio_value", 1_000_000))
+    portfolio_value = float(data.get("portfolio_value", 5_000))
 
     # Deduplicate and clean
     tickers = list(dict.fromkeys(t.strip().upper() for t in tickers_raw if t.strip()))

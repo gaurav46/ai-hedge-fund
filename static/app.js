@@ -24,7 +24,7 @@ function parseTickers(input) {
 
 function runAnalysis() {
     const raw = document.getElementById('tickerInput').value.trim();
-    const portfolio = parseFloat(document.getElementById('portfolioInput').value) || 1000000;
+    const portfolio = parseFloat(document.getElementById('portfolioInput').value) || 5000;
     const tickers = parseTickers(raw);
 
     if (tickers.length === 0) return;
