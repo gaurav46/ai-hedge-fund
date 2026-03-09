@@ -29,7 +29,7 @@ function ensurePyodide() {
   }
   pyodideLoading = true;
   return new Promise((resolve) => {
-    pyodideWorker = new Worker('/static/pyodide-worker.js');
+    pyodideWorker = new Worker('/pyodide-worker.js');
     pyodideWorker.postMessage({ type: 'init' });
 
     pyodideWorker.onmessage = (e) => {
@@ -86,7 +86,7 @@ const loadedModules = {};
 
 async function loadJSModule(moduleName) {
   if (loadedModules[moduleName]) return loadedModules[moduleName];
-  const mod = await import(`/static/models/${moduleName}.js`);
+  const mod = await import(`/models/${moduleName}.js`);
   loadedModules[moduleName] = mod;
   // Also expose on window for Newton-Raphson etc.
   if (!window._quantModels) window._quantModels = {};
