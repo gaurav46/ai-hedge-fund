@@ -383,11 +383,9 @@
 
     <!-- Scripts -->
     <script src="/app.js"></script>
-    <script type="module">
-        import { initQuantLab } from '/quant-lab.js';
-        window._initQuantLab = initQuantLab;
-
-        // Main tab switching
+    <script>
+        // Main tab switching — defined in plain script so it's always available
+        // even if the quant-lab module fails to load.
         window.switchMainTab = function(tab) {
             const isAnalysis = tab === 'analysis';
             document.getElementById('tabAnalysis').classList.toggle('hidden', !isAnalysis);
@@ -398,9 +396,15 @@
 
             if (!isAnalysis && !window._qlInitialized) {
                 window._qlInitialized = true;
-                initQuantLab();
+                if (window._initQuantLab) {
+                    window._initQuantLab();
+                }
             }
         };
+    </script>
+    <script type="module">
+        import { initQuantLab } from '/quant-lab.js';
+        window._initQuantLab = initQuantLab;
     </script>
 </body>
 </html>

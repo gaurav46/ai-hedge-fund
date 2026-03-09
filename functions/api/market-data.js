@@ -29,47 +29,54 @@ export async function onRequestPost(context) {
 async function handleYahooFinance(ticker, portfolioValue) {
   const sym = encodeURIComponent(ticker.toUpperCase());
 
-  // Fetch quote summary (fundamentals + price)
-  const quoteUrl = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${sym}?modules=summaryDetail,financialData,defaultKeyStatistics,incomeStatementHistory,price`;
-  // Fetch historical prices (90 days)
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'application/json',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Origin': 'https://finance.yahoo.com',
+    'Referer': 'https://finance.yahoo.com/',
+  };
+
+  // v7 quote: real-time price + basic metrics (no cookie/crumb needed)
+  const quoteUrl = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${sym}&fields=regularMarketPrice,trailingPE,priceToBook,marketCap,beta,trailingAnnualDividendYield,fiftyTwoWeekHigh,fiftyTwoWeekLow,sector`;
+  // v8 chart: historical OHLCV (stable endpoint)
   const now = Math.floor(Date.now() / 1000);
   const period1 = now - 90 * 86400;
   const histUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?period1=${period1}&period2=${now}&interval=1d`;
+  // v11 quoteSummary: supplemental financial data (may fail, that's ok)
+  const finUrl = `https://query1.finance.yahoo.com/v11/finance/quoteSummary/${sym}?modules=financialData,defaultKeyStatistics`;
 
-  const headers = {
-    'User-Agent': 'Mozilla/5.0',
-    'Accept': 'application/json',
-  };
-
-  let [quoteResp, histResp] = await Promise.all([
+  const [quoteResp, histResp, finResp] = await Promise.all([
     fetch(quoteUrl, { headers }),
     fetch(histUrl, { headers }),
+    fetch(finUrl, { headers }).catch(() => null),
   ]);
 
-  if (!quoteResp.ok) return json({ error: `Yahoo Finance error: ${quoteResp.status}` }, 502);
+  if (!quoteResp.ok) return json({ error: `Yahoo Finance quote error: ${quoteResp.status}` }, 502);
   if (!histResp.ok) return json({ error: `Yahoo Finance history error: ${histResp.status}` }, 502);
 
   const quoteData = await quoteResp.json();
   const histData = await histResp.json();
+  const finData = (finResp?.ok) ? await finResp.json().catch(() => null) : null;
 
-  // Parse the raw Yahoo data
-  const result = parseYahooData(ticker, quoteData, histData, portfolioValue);
+  const result = parseYahooData(ticker, quoteData, histData, finData, portfolioValue);
   return json(result);
 }
 
-function parseYahooData(ticker, quoteData, histData, portfolioValue) {
-  const q = quoteData?.quoteSummary?.result?.[0] || {};
-  const sd = q.summaryDetail || {};
-  const fd = q.financialData || {};
-  const ks = q.defaultKeyStatistics || {};
-  const pr = q.price || {};
+function parseYahooData(ticker, quoteData, histData, finData, portfolioValue) {
+  // v7 quote response
+  const q = quoteData?.quoteResponse?.result?.[0] || {};
+  const currentPrice = q.regularMarketPrice || 0;
+  const beta = q.beta || 1.0;
+  const pe = q.trailingPE || null;
+  const pb = q.priceToBook || null;
+  const divYield = q.trailingAnnualDividendYield || 0;
+  const mktCap = q.marketCap || null;
 
-  const currentPrice = pr.regularMarketPrice?.raw || sd.previousClose?.raw || 0;
-  const beta = sd.beta?.raw || 1.0;
-  const pe = sd.trailingPE?.raw || null;
-  const pb = ks.priceToBook?.raw || null;
-  const divYield = sd.dividendYield?.raw || 0;
-  const mktCap = pr.marketCap?.raw || null;
+  // Optional: v11 financialData supplement
+  const fin = finData?.quoteSummary?.result?.[0] || {};
+  const fd = fin.financialData || {};
+  const ks = fin.defaultKeyStatistics || {};
   const profitMargin = fd.profitMargins?.raw || null;
   const revenueGrowth = fd.revenueGrowth?.raw || null;
   const debtToEquity = fd.debtToEquity?.raw ? fd.debtToEquity.raw / 100 : null;
@@ -84,8 +91,8 @@ function parseYahooData(ticker, quoteData, histData, portfolioValue) {
   const sma20 = computeSMA(closes, 20);
   const sma50 = computeSMA(closes, 50);
   const sma200 = computeSMA(closes, 200);
-  const high52 = closes.length ? Math.max(...closes.slice(-252)) : currentPrice;
-  const low52 = closes.length ? Math.min(...closes.slice(-252)) : currentPrice;
+  const high52 = closes.length ? Math.max(...closes.slice(-252)) : (q.fiftyTwoWeekHigh || currentPrice);
+  const low52 = closes.length ? Math.min(...closes.slice(-252)) : (q.fiftyTwoWeekLow || currentPrice);
 
   // Simple agent-style scoring (deterministic, no LLMs)
   const signals = computeAgentSignals({
@@ -122,7 +129,7 @@ function parseYahooData(ticker, quoteData, histData, portfolioValue) {
       sma_200: sma200,
       week_52_high: high52,
       week_52_low: low52,
-      sector: pr.sector || 'Unknown',
+      sector: q.sector || fin.price?.sector || 'Unknown',
     },
     price_history: priceHistory30,
     investor_signals: signals.investors,
