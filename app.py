@@ -3,6 +3,7 @@
 
 import sys
 import os
+from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -16,6 +17,7 @@ from data.market_data import fetch_market_data
 from models import Signal
 
 app = Flask(__name__)
+executor = ThreadPoolExecutor()
 
 
 @app.route("/")
@@ -43,8 +45,14 @@ def analyze():
 def _analyze_single(ticker, portfolio_value, provider=None):
     """Analyze a single ticker. Returns a dict or raises."""
     market_data = fetch_market_data(ticker, provider=provider)
-    investor_signals = [agent.analyze(market_data) for agent in INVESTOR_AGENTS]
-    analyst_signals = [agent.analyze(market_data) for agent in ANALYST_AGENTS]
+
+    # Analyze agents in parallel
+    investor_futures = [executor.submit(agent.analyze, market_data) for agent in INVESTOR_AGENTS]
+    analyst_futures = [executor.submit(agent.analyze, market_data) for agent in ANALYST_AGENTS]
+
+    investor_signals = [f.result() for f in investor_futures]
+    analyst_signals = [f.result() for f in analyst_futures]
+
     all_signals = investor_signals + analyst_signals
     risk = assess_risk(market_data, all_signals)
     trade_decision = make_decision(
