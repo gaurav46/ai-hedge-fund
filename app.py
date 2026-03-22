@@ -12,7 +12,7 @@ from agents.investors import INVESTOR_AGENTS
 from agents.analysts import ANALYST_AGENTS
 from agents.risk_manager import assess_risk
 from agents.portfolio_manager import make_decision
-from data.market_data import fetch_market_data, format_market_data
+from data.market_data import fetch_market_data
 from models import Signal
 
 app = Flask(__name__)
